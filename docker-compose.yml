@@ -14,7 +14,6 @@ services:
 
   db:
     image: postgres:13.16
-    
     container_name: db
     environment:
       POSTGRES_DB: "mydb"
@@ -30,7 +29,7 @@ services:
       context: ./frontend
     container_name: web
     ports:
-      - "3000:80"
+      - "80:80"
     
     depends_on:
       - api
