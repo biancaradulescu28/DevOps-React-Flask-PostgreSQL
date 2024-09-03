@@ -47,12 +47,6 @@ spec:
         - name: initsql
           configMap:
             name: postgres-init
-  volumeClaimTemplates:
-  - metadata:
-      name: dbdata
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "standard"
-      resources:
-        requests:
-          storage: 1Gi
+        - name: dbdata
+          persistentVolumeClaim:
+            claimName: pvc-standard

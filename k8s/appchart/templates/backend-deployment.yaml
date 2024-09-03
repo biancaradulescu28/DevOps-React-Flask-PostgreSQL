@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: biancaradulescu/a2-backend:v3
+        image: biancaradulescu/a2-backend:v4
         imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_DB

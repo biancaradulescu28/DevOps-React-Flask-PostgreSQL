@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: biancaradulescu/a2-frontend:v5
+        image: biancaradulescu/a2-frontend:v6
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
