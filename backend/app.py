@@ -2,15 +2,13 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 import os
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host="db",
+        host="postgres-service",
         database=os.getenv("POSTGRES_DB"),
         user=os.getenv("POSTGRES_USER"),
         password=os.getenv("POSTGRES_PASSWORD")

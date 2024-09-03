@@ -6,7 +6,7 @@ metadata:
   name: backend
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -23,14 +23,26 @@ spec:
     spec:
       containers:
       - name: api
-        image: biancaradulescu/a2-backend:v1
+        image: biancaradulescu/a2-backend:v3
         imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_DB
-          value: "mydb"
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_DB
+              optional: false
         - name: POSTGRES_USER
-          value: "myuser"
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_USER
+              optional: false
         - name: POSTGRES_PASSWORD
-          value: "mypassword"
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_PASSWORD
+              optional: false
         ports:
         - containerPort: 5000

@@ -6,7 +6,7 @@ function App() {
   const [data, setData] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/')
+    fetch('http://backend-service.default.svc.cluster.local:5000/')
       .then(response => response.text())
       .then(data => {
         console.log('Data fetched:', data);

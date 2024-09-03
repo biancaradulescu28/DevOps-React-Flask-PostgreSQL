@@ -13,26 +13,46 @@ spec:
       labels:
         app: postgres
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - name: postgres
         image: postgres:13.16
         env:
         - name: POSTGRES_DB
-          value: "mydb"
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_DB
+              optional: false
         - name: POSTGRES_USER
-          value: "myuser"
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_USER
+              optional: false
         - name: POSTGRES_PASSWORD
-          value: "mypassword"
+          valueFrom:
+            secretKeyRef:
+              name: postgresql-secrets
+              key: POSTGRES_PASSWORD
+              optional: false
         ports:
         - containerPort: 5432
         volumeMounts:
-        - name: db_data
+        - name: dbdata
           mountPath: /var/lib/postgresql/data
+        - name: initsql
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: initsql
+          configMap:
+            name: postgres-init
   volumeClaimTemplates:
   - metadata:
-      name: db_data
+      name: dbdata
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
       resources:
         requests:
           storage: 1Gi
