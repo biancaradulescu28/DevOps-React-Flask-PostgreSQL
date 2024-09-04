@@ -4,6 +4,7 @@ metadata:
   name: postgres-service
   labels:
     app: postgres
+  namespace: myapp
 spec:
   ports:
   - port: 5432

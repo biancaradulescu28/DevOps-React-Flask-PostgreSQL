@@ -4,6 +4,7 @@ metadata:
   name: frontend-service
   labels:
     app: frontend
+  namespace: myapp
 spec:
   type: ClusterIP
   ports:

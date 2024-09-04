@@ -1,7 +1,8 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: standard
+  name: basic
+  namespace: myapp
 provisioner: kubernetes.io/aws-ebs
 allowVolumeExpansion: true
 parameters:

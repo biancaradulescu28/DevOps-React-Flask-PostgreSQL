@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
+  namespace: myapp
 spec:
   selector:
     matchLabels:
@@ -43,6 +44,14 @@ spec:
           mountPath: /var/lib/postgresql/data
         - name: initsql
           mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+            #QoS: Guaranteed
       volumes:
         - name: initsql
           configMap:
