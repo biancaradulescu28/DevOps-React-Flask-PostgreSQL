@@ -46,11 +46,11 @@ spec:
           mountPath: /docker-entrypoint-initdb.d
         resources:
           requests:
-            memory: "2Gi"
-            cpu: "1"
+            memory: "1Gi"
+            cpu: "500m"
           limits:
-            memory: "2Gi"
-            cpu: "1"
+            memory: "1Gi"
+            cpu: "500m"
             #QoS: Guaranteed
       volumes:
         - name: initsql

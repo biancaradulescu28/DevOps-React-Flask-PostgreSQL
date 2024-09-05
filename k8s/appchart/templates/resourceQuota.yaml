@@ -5,9 +5,9 @@ metadata:
   namespace: myapp
 spec:
   hard:
-    requests.cpu: "2.5"
-    requests.memory: "2.5Gi"
-    limits.cpu: "5"
-    limits.memory: "5Gi"
-    pods: "5"
-    persistentvolumeclaims: "2"
+    requests.cpu: "4"
+    requests.memory: "4Gi"
+    limits.cpu: "8"
+    limits.memory: "8Gi"
+    pods: "10"
+    persistentvolumeclaims: "3"

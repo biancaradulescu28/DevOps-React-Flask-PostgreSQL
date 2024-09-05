@@ -15,7 +15,7 @@ def get_db_connection():
     )
     return conn
 
-@app.route('/')
+@app.route('/api/users', methods=['GET'])
 def hello_names():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -29,4 +29,4 @@ def hello_names():
     return result
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)

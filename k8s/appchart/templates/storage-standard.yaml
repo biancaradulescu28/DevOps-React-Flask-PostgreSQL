@@ -3,7 +3,15 @@ kind: StorageClass
 metadata:
   name: basic
   namespace: myapp
-provisioner: kubernetes.io/aws-ebs
+provisioner: kubernetes.io/azure-file
+reclaimPolicy: Delete
+mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
 allowVolumeExpansion: true
 parameters:
-  type: gp2 #EBS volume type :general purpose SSD
+  skuName: Standard_LRS
+  secretName: azure-secret
+  secretNamespace: myapp
