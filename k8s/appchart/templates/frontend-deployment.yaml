@@ -21,6 +21,16 @@ spec:
       labels:
         app: frontend
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - frontend
+            topologyKey: kubernetes.io/hostname
       containers:
       - name: web
         image: biancaradulescu/a2-frontend:v6

@@ -21,6 +21,16 @@ spec:
       labels:
         app: backend
     spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: #Daca nu sunt disponibile noduri care respecta regula, pod-urile nu vor fi programate.
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - frontend
+            topologyKey: kubernetes.io/hostname
       containers:
       - name: api
         image: biancaradulescu/a2-backend:v4
