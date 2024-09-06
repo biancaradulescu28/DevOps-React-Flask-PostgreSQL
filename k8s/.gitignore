@@ -1,5 +1,4 @@
 deployment.yaml
-hpa.yaml
 service.yaml
 serviceaccount.yaml
 ingress.yaml
