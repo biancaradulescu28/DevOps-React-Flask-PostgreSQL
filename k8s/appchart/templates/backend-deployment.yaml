@@ -12,8 +12,8 @@ spec:
       app: backend
   strategy:
     rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
+      maxSurge: 50%
+      maxUnavailable: 50%
     type: RollingUpdate
   template:
     metadata:
@@ -21,16 +21,6 @@ spec:
       labels:
         app: backend
     spec:
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution: #Daca nu sunt disponibile noduri care respecta regula, pod-urile nu vor fi programate.
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - frontend
-            topologyKey: kubernetes.io/hostname
       containers:
       - name: api
         image: biancaradulescu/a2-backend:v4

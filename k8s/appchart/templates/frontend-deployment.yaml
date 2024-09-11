@@ -10,11 +10,11 @@ spec:
   selector:
     matchLabels:
       app: frontend
-  # strategy:
-  #   rollingUpdate:
-  #     maxSurge: 25%
-  #     maxUnavailable: 25%
-  #   type: RollingUpdate
+  strategy:
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 50%
+    type: RollingUpdate
   template:
     metadata:
       creationTimestamp: null
@@ -22,14 +22,14 @@ spec:
         app: frontend
     spec:
       affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution: #Daca nu sunt disponibile noduri care respecta regula, pod-urile nu vor fi programate.
           - labelSelector:
               matchExpressions:
               - key: app
                 operator: In
                 values:
-                - frontend
+                - backend
             topologyKey: kubernetes.io/hostname
       containers:
       - name: web

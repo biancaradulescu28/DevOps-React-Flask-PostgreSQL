@@ -1,6 +1,3 @@
-deployment.yaml
-service.yaml
-serviceaccount.yaml
 ingress.yaml
 NOTES.txt
 _helpers.tpl
