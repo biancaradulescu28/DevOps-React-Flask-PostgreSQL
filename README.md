@@ -134,7 +134,8 @@ kubectl expose service grafana — type=NodePort — target-port=3000 — name=g
 
 ## Scaling and Updates
 ### HorizontalPodAutoscaler
-For the backend deployment I creted an HPA that dynamically adjusts the number of replicas maintaining a number between 2 and 5 replicas, scaling based on CPU and memory utilization. It keeps the average utilization of both resources at 50%.
+For the backend deployment I created an HPA that dynamically adjusts the number of replicas maintaining a number between 2 and 5 replicas, scaling based on CPU and memory utilization. It keeps the average utilization of both resources at 50%.
+I also created an HPA for the posgres statefulSet based on CPU and memory usage, keeping the replicas number between 1 and 5 and the respource utilization around 70%. This ensures that the database cand handle varying loads by sca;ing the number of pods.
 The HPA uses the Metrics Server to get resource metrics so I enabled the metrics server addon on minikube using:
 ``` 
 minikube addons enable metrics-server 
