@@ -141,51 +141,46 @@ The HPA uses the Metrics Server to get resource metrics so I enabled the metrics
 minikube addons enable metrics-server 
 
 ``` 
+![Screenshot 2024-09-11 212548](https://github.com/user-attachments/assets/1092f1ec-be20-4c42-9070-3208b4fb9e25)
 
 ### Rolling Update
 Before the rolling update I specified a rollingUpdate strategy. I set maxSurge to allow up top 50% more pods to make sure I can add new pods without making the service less available, and I set maxUnavailable to ensure that no more that 50% of the pods are unavailable at the same time.
 
 Steps:  --images
-* Update backend deployment image
-```
-kubectl set image deployment/backend -n myapp api=biancaradulescu/a2-backend:v3
-```
+* Change backend deployment image to a different version
+![Screenshot 2024-09-11 175258](https://github.com/user-attachments/assets/da6618bd-4d5f-470d-875c-ace8c21a5713)
+
 * Apply the updated configuration   --image cu v3
-```
-kubectl apply -f ./appchart/templates/backend-deployment.yaml
-```
+![Screenshot 2024-09-11 175315](https://github.com/user-attachments/assets/ec4e9f7f-fe90-4352-9412-bc7d7eb6678f)
+![Screenshot 2024-09-11 175857](https://github.com/user-attachments/assets/4c65516a-737e-4b5b-9a85-b87670c0ef87)
+
 * Verify rolling Update
-```
-kubectl rollout status deployment/backend -n myapp
-kubectl rollout history deployment/backend -n myapp
-```
---si imagine cu history
+![Screenshot 2024-09-11 175422](https://github.com/user-attachments/assets/8f16aed9-2f94-4e48-bd0e-84d44fb2418f)
+![Screenshot 2024-09-11 175510](https://github.com/user-attachments/assets/94456329-927d-44c0-b45c-12dd7095d8ed)
+
 * Rollback
-```
-kubectl rollout undo deployment/backend -n myapp
-```
---imagine si cu history
-* Apply the old configuration   --image cu v4
-```
-kubectl apply -f ./appchart/templates/backend-deployment.yaml
-```
+![Screenshot 2024-09-11 175736](https://github.com/user-attachments/assets/c52ac69e-79da-4eb4-9b1f-a5b5a7dd9d49)
+![Screenshot 2024-09-11 175634](https://github.com/user-attachments/assets/5212eddc-1385-4ca6-81cb-255f58e8c30e)
+
+* Apply the old configuration
+![Screenshot 2024-09-11 175927](https://github.com/user-attachments/assets/466311fa-de79-41d0-8b8a-4210138d78d8)
 
 ## Advanced Scheduling
 For this step I created a new node to my minikube cluster using the following command:
 ```
 minikube node add
 ```
---imagine noduri
+![Screenshot 2024-09-11 202900](https://github.com/user-attachments/assets/51b98cec-0037-48d0-90a2-e2d66cf21007)
+
 ### Affinity 
 * **Pod Affinity**
 For the frontend pods I configured affinity rules requiring them to be scheduled on the same nodes as backend pods. This improves communication speed between the frontend and backend Using the In operator the label selector will match the values in the list of labels, in this case frontend. And ```requiredDuringSchedulingIgnoredDuringExecution``` ensures that the scheduling can not be ignored and if there are no nodes which respect the rules the pods will not start.
 * **Pod Anti-Affinity**
 I applied the podAntiAffinity for the Postgres database to keep pods with the postgres label on differenet nodes. This reduces the risk of losing all replicas of the database in case of node failure.
 ### Taints and Tolerations
-I tainted my second node using a NoSchedule effect so that pods without a matching toleration will not be scheduled on this node. --image
+I tainted my second node using a NoSchedule effect so that pods without a matching toleration will not be scheduled on this node.
 ```
 kubectl taint nodes minikube-m02 key=db:NoSchedule
 ```
 Also in the database statefulset I added tolerations matching the key, value and effect with the taint and using the ```operator:"Egual"``` to specify how the toleration compares the key and value with the taint. Isolating the database on a dedicated node ensures it won't compoete for resources with other pods. This leads to a more predictable and stable perfomance of the database
-
---image din nod
+![Screenshot 2024-09-11 204453](https://github.com/user-attachments/assets/d417ddb1-8670-4a01-ad68-6d523c72d8cc)
