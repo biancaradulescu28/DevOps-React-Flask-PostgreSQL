@@ -98,7 +98,7 @@ CPU and memory min ensure that no container under-provisions its resource reques
 The CPU requests and limits set how much CPU the namespace can request and use the numbers are set to fit all the resources in the myapp namespace. And the memory requests and limits restrict the total memory consumption. ``` pods: "10" ``` limit the total number of pods and the number was set to be higher the the number of the current pods generated. 
 ![Screenshot 2024-09-11 210759](https://github.com/user-attachments/assets/5202c374-f180-47a3-a291-17389a96cd1a)
 
-## Storage Configuration --image
+## Storage Configuration 
 **HostPath**
 * StorageClass
 This SC uses the HostPath CSI driver which provides storage on a node. It has immediate volume binding which indicated that PVCs will have volumes bound and allocated immediately on creation. The Volumes are created dynamically and when a PV from this StorageClass is deleted, the associated.
@@ -115,6 +115,10 @@ This PVC requests as well 1 GiB of storage with ReadWriteOnce access mode. The s
 
 * PersistentVolume
 The PV uses the local-storage StorageClass, which means the storage is manually set up. It can be accessed by a single node at a time with read-write permissions. It provides 5 GiB of storage which is located on a specific node named minikube-m02. The nodeAffinity ensures that the volume is only available on the specified node.
+![Screenshot 2024-09-13 010104](https://github.com/user-attachments/assets/2a73cc85-3b16-4608-b094-6217717c1b98)
+![Screenshot 2024-09-13 010133](https://github.com/user-attachments/assets/cefb1761-f349-48c6-920e-62fd65bdb9c0)
+![Screenshot 2024-09-13 010232](https://github.com/user-attachments/assets/abc140dc-3ee8-497e-82ac-6779e8691162)
+
 
 ## Advanced Networking
 * **Backend Network Policy**
@@ -124,8 +128,10 @@ The frontend can communicate with the backend only on port 5000
 * **Database Network Policy**
 This allows traffic from the backend pod to the database pod on port 5432
 I also configured two Default Deny Policies, one for backend and one to the database to deny all ingress traffic to the pods.
-I also added deny policies for backend and database to block all incoming traffic except for what is alloewd by other policies.
+I also added deny policies for backend and database to block all incoming traffic except for what is allowed by other policies.
 ![Screenshot 2024-09-11 210930](https://github.com/user-attachments/assets/239940e1-5cea-4fdb-9e2b-e40a1cac0a38)
+![NetworkPolicyDiagram drawio](https://github.com/user-attachments/assets/1778bb79-f18c-4916-8caf-f1be1ef54476)
+
 
 ## Monitoring and Logging
 For monitoring and logging I created separate namespaces.
@@ -153,7 +159,13 @@ kubectl expose service grafana — type=NodePort — target-port=3000 — name=g
 **Dashboards**
 I created 2 dashboards:
 * Backend dashboard which shows the CPU and Memory usage for backend pods and I also added a pannel for pod restarts metrics. All pannels use different types of charts.
+![Screenshot 2024-09-13 011219](https://github.com/user-attachments/assets/23416ee5-f379-4a40-a4a0-332a9e94304b)
+![Screenshot 2024-09-13 011225](https://github.com/user-attachments/assets/c9ac6b13-eb6e-4530-8b45-3ae79c353d85)
+
 * Postgres dashboards with pannels for CPU and Memory usage for postgres pods and a chart to monitor pod uptime.
+![Screenshot 2024-09-13 011151](https://github.com/user-attachments/assets/9cc744dc-e4d9-4e72-a84e-1d047186ba10)
+![Screenshot 2024-09-13 011158](https://github.com/user-attachments/assets/3a9c24c7-6bca-4d60-a059-e9b9774ddacd)
+
 
 ## Scaling and Updates
 ### HorizontalPodAutoscaler
@@ -169,11 +181,11 @@ minikube addons enable metrics-server
 ### Rolling Update
 Before the rolling update I specified a rollingUpdate strategy. I set maxSurge to allow up top 50% more pods to make sure I can add new pods without making the service less available, and I set maxUnavailable to ensure that no more that 50% of the pods are unavailable at the same time.
 
-Steps:  --images
+Steps:
 * Change backend deployment image to a different version
 ![Screenshot 2024-09-11 175258](https://github.com/user-attachments/assets/da6618bd-4d5f-470d-875c-ace8c21a5713)
 
-* Apply the updated configuration   --image cu v3
+* Apply the updated configuration
 ![Screenshot 2024-09-11 175315](https://github.com/user-attachments/assets/ec4e9f7f-fe90-4352-9412-bc7d7eb6678f)
 ![Screenshot 2024-09-11 175857](https://github.com/user-attachments/assets/4c65516a-737e-4b5b-9a85-b87670c0ef87)
 
@@ -209,7 +221,6 @@ Also in the database statefulset I added tolerations matching the key, value and
 ![Screenshot 2024-09-11 204453](https://github.com/user-attachments/assets/d417ddb1-8670-4a01-ad68-6d523c72d8cc)
 
 ## Health Checks and Application Lifecycle
---image when it works
 ### Liveness
 * The backend liveness probe checks if the application is running, else it restarts the container. This probe makes an HTTP GET request to the /liveness endpoint on port 5000 which I configured in ```app.py```:
 ```
