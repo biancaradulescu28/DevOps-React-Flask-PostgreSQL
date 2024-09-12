@@ -4,7 +4,6 @@ metadata:
   name: elasticsearch
   labels:
     app: elasticsearch
-  namespace: logging
 spec:
   selector:
     app: elasticsearch

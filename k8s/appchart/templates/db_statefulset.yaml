@@ -67,10 +67,16 @@ spec:
             memory: "1Gi"
             cpu: "500m"
             #QoS: Guaranteed
+        readinessProbe:
+          exec:
+            command: ["pg_isready" ,"-U" ,"$(POSTGRES_USER)", "-d" ,"$(POSTGRE_DB_NAME)"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
       volumes:
         - name: initsql
           configMap:
             name: postgres-init
         - name: dbdata
           persistentVolumeClaim:
-            claimName: pvc-standard
+            claimName: pvc-hostpath

@@ -4,7 +4,6 @@ metadata:
   name: kibana
   labels:
     app: kibana
-  namespace: logging
 spec:
   replicas: 1
   selector:

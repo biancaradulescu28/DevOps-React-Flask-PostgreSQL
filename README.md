@@ -184,3 +184,37 @@ kubectl taint nodes minikube-m02 key=db:NoSchedule
 ```
 Also in the database statefulset I added tolerations matching the key, value and effect with the taint and using the ```operator:"Egual"``` to specify how the toleration compares the key and value with the taint. Isolating the database on a dedicated node ensures it won't compoete for resources with other pods. This leads to a more predictable and stable perfomance of the database
 ![Screenshot 2024-09-11 204453](https://github.com/user-attachments/assets/d417ddb1-8670-4a01-ad68-6d523c72d8cc)
+
+## Health Checks and Application Lifecycle
+--image when it works
+### Liveness
+* The backend liveness probe checks if the application is running, else it restarts the container. This probe makes an HTTP GET request to the /liveness endpoint on port 5000 which I configured in ```app.py```:
+```
+@app.route('/liveness', methods=['GET'])
+def health_check():
+    return 'Alive', 200
+```
+* For the fronted I created a liveness probe similar to the backend one which makes an HTTP GET request to the /liveness path on port 80.
+
+### Readiness
+* The backend readiness probe checks if the application is ready to receove traffic. If the probe fails traffic to the pod will be stopped until it passes again. This probe is also an HTTP GET request, to the /readiness endpoint on port 5000. This endpoint checks if the application is running and if it can connect to the database.
+```
+@app.route('/readiness', methods=['GET'])
+def readiness_check():
+    try:
+        conn = get_db_connection()
+        conn.close()
+        return 'Ready', 200
+    except Exception as e:
+        return f'Not Ready: {str(e)}', 500
+```
+* The frontend probe checks if the frontend container is accepting TCP connections on port 80 allowing the probe to fail up to 30 times.
+* For the database I created a readiness probe which checks if the PostgrSQL instance is ready to accept connections. I used an exec probe with the ```pg_isready``` command to check the connection status of a PostgreSQL server.
+
+### Startup
+The backend startup probe is used to check if the application has started correctly by listening for TCP connections on port 5000. The probe is allwoed to fail 30 times before is considered failed.
+
+**Scenario**
+
+Suppose that after a deployment of the application the PostgreSQL takes longer to initialize. Without the readiness probe on the database the backend could start sending requests to the database causing failed queries. Also the readiness probe on the backend will check if it can connect and avoid errors for users trying to interact with the application.
+The readiness probe the frontend service will also check if it can connect with the backend. If the backend is not ready the probe will fail and the frontend won't start sending traffic. 

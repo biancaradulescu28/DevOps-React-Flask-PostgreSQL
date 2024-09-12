@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: biancaradulescu/a2-backend:v4
+        image: biancaradulescu/a2-backend:v16
         imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_DB
@@ -54,3 +54,21 @@ spec:
             memory: "1Gi"
             cpu: "1"
         #QoS: Burstable
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        startupProbe:
+          tcpSocket:
+            port: 5000
+          failureThreshold: 30
+          periodSeconds: 10
+          timeoutSeconds: 5

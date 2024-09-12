@@ -9,7 +9,7 @@ spec:
   type: ClusterIP
   ports:
     - protocol: TCP
-      port: 80  # Portul pe care backendul este expus in cluster
+      port: 9090  # Portul pe care backendul este expus in cluster
       targetPort: 80  # Portul pe care aplicatia backend ruleaza in container
   selector:
     app: frontend

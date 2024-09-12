@@ -33,9 +33,20 @@ spec:
             topologyKey: kubernetes.io/hostname
       containers:
       - name: web
-        image: biancaradulescu/a2-frontend:v6
+        image: biancaradulescu/a2-frontend:v10
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
         #QoS: BestEffort
-    
+        livenessProbe:
+          httpGet:
+            path: /liveness
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 10
+          timeoutSeconds: 5

@@ -2,3 +2,4 @@ ingress.yaml
 NOTES.txt
 _helpers.tpl
 test-connection.yaml
+kubectl
