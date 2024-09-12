@@ -98,6 +98,23 @@ CPU and memory min ensure that no container under-provisions its resource reques
 The CPU requests and limits set how much CPU the namespace can request and use the numbers are set to fit all the resources in the myapp namespace. And the memory requests and limits restrict the total memory consumption. ``` pods: "10" ``` limit the total number of pods and the number was set to be higher the the number of the current pods generated. 
 ![Screenshot 2024-09-11 210759](https://github.com/user-attachments/assets/5202c374-f180-47a3-a291-17389a96cd1a)
 
+## Storage Configuration --image
+**HostPath**
+* StorageClass
+This SC uses the HostPath CSI driver which provides storage on a node. It has immediate volume binding which indicated that PVCs will have volumes bound and allocated immediately on creation. The Volumes are created dynamically and when a PV from this StorageClass is deleted, the associated.
+
+* PersistentVolumeClaim
+This PVC uses the hostpath StorageClass to create a storage request of 1GiB, with read-write access, both read from and written to, but only by one node at a time.
+
+**Local**
+* StorageClass
+This StorageClass uses ```kubernetes.io/no-provisioner``` which means that automatically create storage but expects you to set it up manually. It uses WaitForFirstConsumer, meaning it will only assign the storage to a pod after the pod is scheduled to run on a node. This ensures that the volume is bound to a node that will actually use it.
+
+* PersistentVolumeClaim
+This PVC requests as well 1 GiB of storage with ReadWriteOnce access mode. The storageClassName is set to local-storage, indicating that the PVC is using the previously defined local-storage StorageClass.
+
+* PersistentVolume
+The PV uses the local-storage StorageClass, which means the storage is manually set up. It can be accessed by a single node at a time with read-write permissions. It provides 5 GiB of storage which is located on a specific node named minikube-m02. The nodeAffinity ensures that the volume is only available on the specified node.
 
 ## Advanced Networking
 * **Backend Network Policy**
@@ -112,7 +129,8 @@ I also added deny policies for backend and database to block all incoming traffi
 
 ## Monitoring and Logging
 For monitoring and logging I created separate namespaces.
-* **Install Prometheus**
+* **Prometheus**
+Prometheus monitors and collects metrics about the cluster’s performance and resource usage, stores the data, and can alert users about issues. It helps track system health and performance.
 ``` 
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
@@ -121,7 +139,8 @@ kubectl expose service prometheus-server --type=NodePort --target-port=9090 --na
 
 ```
 
-* **Install Grafana**
+* **Grafana**
+Grafana is used to visualize the metrics collected by Prometheus. It connects to Prometheus to create dashboards and graphs, making it easier to monitor and analyze the performance and health of the Kubernetes cluster through visual representations.
 ```
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo update
@@ -131,6 +150,10 @@ kubectl expose service grafana — type=NodePort — target-port=3000 — name=g
 ```
 ![Screenshot 2024-09-11 211322](https://github.com/user-attachments/assets/1f092f77-fd0a-4155-85e6-45e5616cfb65)
 
+**Dashboards**
+I created 2 dashboards:
+* Backend dashboard which shows the CPU and Memory usage for backend pods and I also added a pannel for pod restarts metrics. All pannels use different types of charts.
+* Postgres dashboards with pannels for CPU and Memory usage for postgres pods and a chart to monitor pod uptime.
 
 ## Scaling and Updates
 ### HorizontalPodAutoscaler
