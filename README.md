@@ -38,7 +38,7 @@ I created the deployment configuration by first creating a deployment with ``` d
 kubectl create deployment test --image biancaradulescu/a2-frontend:v1 -o yaml --dry-run
 ```
 ### StatefulSet
-The configuration defines a single replica of a PostgreSQL database, which uses the ``` postgres:13.16 ``` image and sets the environment variables from aKubernetes secret. The database data is stored in a Persistent Volume, and the initialization scripts are mounted from a ConfigMap.
+The configuration defines a single replica of a PostgreSQL database, which uses the ``` postgres:13.16 ``` image and sets the environment variables from a Kubernetes secret. The database data is stored in a Persistent Volume, and the initialization scripts are mounted from a ConfigMap.
 ![Screenshot 2024-09-04 093016](https://github.com/user-attachments/assets/0994b2b5-aabc-4655-b8aa-bfa96e3fbc9b)
 
 
