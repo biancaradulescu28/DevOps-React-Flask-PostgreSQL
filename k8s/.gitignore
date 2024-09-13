@@ -3,3 +3,5 @@ NOTES.txt
 _helpers.tpl
 test-connection.yaml
 kubectl
+frontend-ingress.yaml
+backend-ingress.yaml
