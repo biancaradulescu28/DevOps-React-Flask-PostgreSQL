@@ -210,13 +210,13 @@ minikube node add
 * **Pod Affinity**
 For the frontend pods I configured affinity rules requiring them to be scheduled on the same nodes as backend pods. This improves communication speed between the frontend and backend Using the In operator the label selector will match the values in the list of labels, in this case frontend. And ```requiredDuringSchedulingIgnoredDuringExecution``` ensures that the scheduling can not be ignored and if there are no nodes which respect the rules the pods will not start.
 * **Pod Anti-Affinity**
-I applied the podAntiAffinity for the Postgres database to keep pods with the postgres label on differenet nodes. This reduces the risk of losing all replicas of the database in case of node failure.
+I applied the podAntiAffinity for the Postgres database to keep pods with the postgres label on different nodes. This reduces the risk of losing all replicas of the database in case of node failure.
 ### Taints and Tolerations
 I tainted my second node using a NoSchedule effect so that pods without a matching toleration will not be scheduled on this node.
 ```
 kubectl taint nodes minikube-m02 key=db:NoSchedule
 ```
-Also in the database statefulset I added tolerations matching the key, value and effect with the taint and using the ```operator:"Egual"``` to specify how the toleration compares the key and value with the taint. Isolating the database on a dedicated node ensures it won't compoete for resources with other pods. This leads to a more predictable and stable perfomance of the database
+Also in the database statefulset I added tolerations matching the key, value and effect with the taint and using the ```operator:"Egual"``` to specify how the toleration compares the key and value with the taint. Isolating the database on a dedicated node ensures it won't compete for resources with other pods. This leads to a more predictable and stable perfomance of the database
 ![Screenshot 2024-09-11 204453](https://github.com/user-attachments/assets/d417ddb1-8670-4a01-ad68-6d523c72d8cc)
 
 ## Health Checks and Application Lifecycle
@@ -230,7 +230,7 @@ def health_check():
 * For the fronted I created a liveness probe similar to the backend one which makes an HTTP GET request to the /liveness path on port 80.
 
 ### Readiness
-* The backend readiness probe checks if the application is ready to receove traffic. If the probe fails traffic to the pod will be stopped until it passes again. This probe is also an HTTP GET request, to the /readiness endpoint on port 5000. This endpoint checks if the application is running and if it can connect to the database.
+* The backend readiness probe checks if the application is ready to receive traffic. If the probe fails traffic to the pod will be stopped until it passes again. This probe is also an HTTP GET request, to the /readiness endpoint on port 5000. This endpoint checks if the application is running and if it can connect to the database.
 ```
 @app.route('/readiness', methods=['GET'])
 def readiness_check():
@@ -242,10 +242,10 @@ def readiness_check():
         return f'Not Ready: {str(e)}', 500
 ```
 * The frontend probe checks if the frontend container is accepting TCP connections on port 80 allowing the probe to fail up to 30 times.
-* For the database I created a readiness probe which checks if the PostgrSQL instance is ready to accept connections. I used an exec probe with the ```pg_isready``` command to check the connection status of a PostgreSQL server.
+* For the database I created a readiness probe which checks if the PostgreSQL instance is ready to accept connections. I used an exec probe with the ```pg_isready``` command to check the connection status of a PostgreSQL server.
 
 ### Startup
-The backend startup probe is used to check if the application has started correctly by listening for TCP connections on port 5000. The probe is allwoed to fail 30 times before is considered failed.
+The backend startup probe is used to check if the application has started correctly by listening for TCP connections on port 5000. The probe is alloewd to fail 30 times before is considered failed.
 
 **Scenario**
 
