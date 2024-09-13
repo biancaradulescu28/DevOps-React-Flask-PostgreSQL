@@ -4,7 +4,7 @@ metadata:
   name: pv-local
 spec:
   capacity:
-    storage: 5Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   storageClassName: local-storage

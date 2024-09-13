@@ -3,7 +3,7 @@
 
 Deploy and manage a multi-tier application on a Kubernetes cluster. Is simple web application consisting of:
 * Frontend: A React.js application 
-* Backend: A Python Flask API  
+* Backend: A Python Flask
 * Database: PostgreSQL
 
 I created a web application which displays in browser a greeting for each name in a users database. After creating the application code in python and react I containerized the application using 2 Dockerfiles: 
@@ -19,7 +19,7 @@ After testing I pushed the images on Dockerhub:
 
 
 ## Kubernetes Cluster Setup
-I am using Minikube to set up a single-node kubernetes cluster. 
+I am using Minikube to set up a kubernetes cluster. 
 ![Screenshot 2024-09-02 151146](https://github.com/user-attachments/assets/1e47238a-6974-43e7-8c79-9f9393d142ba)
 
 
@@ -38,13 +38,13 @@ I created the deployment configuration by first creating a deployment with ``` d
 kubectl create deployment test --image biancaradulescu/a2-frontend:v1 -o yaml --dry-run
 ```
 ### StatefulSet
-The configuration defines a single replica of a PostgreSQL database, which uses the ``` postgres:13.16 ``` image and sets the environment variables from aKubernetes secret. The database data is stored in a Persistent Volume, and the initialization scripts are mounted from a ConfigMap.
+The configuration defines a single replica of a PostgreSQL database, which uses the ``` postgres:13.16 ``` image and sets the environment variables from a Kubernetes secret. The database data is stored in a Persistent Volume, and the initialization scripts are mounted from a ConfigMap.
 ![Screenshot 2024-09-04 093016](https://github.com/user-attachments/assets/0994b2b5-aabc-4655-b8aa-bfa96e3fbc9b)
 
 
 ### Services
 * **Backend service**
-This resource defines a ClusterIP service, exposing the backend application within the cluster on port 5000, directing traffic to port 500 in the container.
+This resource defines a ClusterIP service, exposing the backend application within the cluster on port 5000, directing traffic to port 5000 in the container.
 * **Frontend service**
 The yaml configures another ClusterIP service in the myapp namespace, exposing the application on port 80 in the cluster and mapping it to port 80 in the container. The selector field links the service to the corresponding frontend pods
 * **Database service**
@@ -101,7 +101,7 @@ The CPU requests and limits set how much CPU the namespace can request and use t
 ## Storage Configuration 
 **HostPath**
 * StorageClass
-This SC uses the HostPath CSI driver which provides storage on a node. It has immediate volume binding which indicated that PVCs will have volumes bound and allocated immediately on creation. The Volumes are created dynamically and when a PV from this StorageClass is deleted, the associated.
+This SC uses the HostPath CSI driver which provides storage on a node. It has immediate volume binding which indicated that PVCs will have volumes bound and allocated immediately on creation. The Volumes are created dynamically and when a PV from this StorageClass is deleted, the associated storage on the node is deleted.
 
 * PersistentVolumeClaim
 This PVC uses the hostpath StorageClass to create a storage request of 1GiB, with read-write access, both read from and written to, but only by one node at a time.
@@ -127,7 +127,6 @@ This Policy allows traffic from frontend to the backend pod on port 5000 and tra
 The frontend can communicate with the backend only on port 5000
 * **Database Network Policy**
 This allows traffic from the backend pod to the database pod on port 5432
-I also configured two Default Deny Policies, one for backend and one to the database to deny all ingress traffic to the pods.
 I also added deny policies for backend and database to block all incoming traffic except for what is allowed by other policies.
 ![Screenshot 2024-09-11 210930](https://github.com/user-attachments/assets/239940e1-5cea-4fdb-9e2b-e40a1cac0a38)
 ![NetworkPolicyDiagram drawio](https://github.com/user-attachments/assets/1778bb79-f18c-4916-8caf-f1be1ef54476)
@@ -211,13 +210,13 @@ minikube node add
 * **Pod Affinity**
 For the frontend pods I configured affinity rules requiring them to be scheduled on the same nodes as backend pods. This improves communication speed between the frontend and backend Using the In operator the label selector will match the values in the list of labels, in this case frontend. And ```requiredDuringSchedulingIgnoredDuringExecution``` ensures that the scheduling can not be ignored and if there are no nodes which respect the rules the pods will not start.
 * **Pod Anti-Affinity**
-I applied the podAntiAffinity for the Postgres database to keep pods with the postgres label on differenet nodes. This reduces the risk of losing all replicas of the database in case of node failure.
+I applied the podAntiAffinity for the Postgres database to keep pods with the postgres label on different nodes. This reduces the risk of losing all replicas of the database in case of node failure.
 ### Taints and Tolerations
 I tainted my second node using a NoSchedule effect so that pods without a matching toleration will not be scheduled on this node.
 ```
 kubectl taint nodes minikube-m02 key=db:NoSchedule
 ```
-Also in the database statefulset I added tolerations matching the key, value and effect with the taint and using the ```operator:"Egual"``` to specify how the toleration compares the key and value with the taint. Isolating the database on a dedicated node ensures it won't compoete for resources with other pods. This leads to a more predictable and stable perfomance of the database
+Also in the database statefulset I added tolerations matching the key, value and effect with the taint and using the ```operator:"Egual"``` to specify how the toleration compares the key and value with the taint. Isolating the database on a dedicated node ensures it won't compete for resources with other pods. This leads to a more predictable and stable perfomance of the database
 ![Screenshot 2024-09-11 204453](https://github.com/user-attachments/assets/d417ddb1-8670-4a01-ad68-6d523c72d8cc)
 
 ## Health Checks and Application Lifecycle
@@ -231,7 +230,7 @@ def health_check():
 * For the fronted I created a liveness probe similar to the backend one which makes an HTTP GET request to the /liveness path on port 80.
 
 ### Readiness
-* The backend readiness probe checks if the application is ready to receove traffic. If the probe fails traffic to the pod will be stopped until it passes again. This probe is also an HTTP GET request, to the /readiness endpoint on port 5000. This endpoint checks if the application is running and if it can connect to the database.
+* The backend readiness probe checks if the application is ready to receive traffic. If the probe fails traffic to the pod will be stopped until it passes again. This probe is also an HTTP GET request, to the /readiness endpoint on port 5000. This endpoint checks if the application is running and if it can connect to the database.
 ```
 @app.route('/readiness', methods=['GET'])
 def readiness_check():
@@ -243,10 +242,10 @@ def readiness_check():
         return f'Not Ready: {str(e)}', 500
 ```
 * The frontend probe checks if the frontend container is accepting TCP connections on port 80 allowing the probe to fail up to 30 times.
-* For the database I created a readiness probe which checks if the PostgrSQL instance is ready to accept connections. I used an exec probe with the ```pg_isready``` command to check the connection status of a PostgreSQL server.
+* For the database I created a readiness probe which checks if the PostgreSQL instance is ready to accept connections. I used an exec probe with the ```pg_isready``` command to check the connection status of a PostgreSQL server.
 
 ### Startup
-The backend startup probe is used to check if the application has started correctly by listening for TCP connections on port 5000. The probe is allwoed to fail 30 times before is considered failed.
+The backend startup probe is used to check if the application has started correctly by listening for TCP connections on port 5000. The probe is alloewd to fail 30 times before is considered failed.
 
 **Scenario**
 

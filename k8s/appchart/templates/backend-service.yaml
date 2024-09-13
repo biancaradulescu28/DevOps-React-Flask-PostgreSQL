@@ -9,7 +9,7 @@ spec:
   type: ClusterIP
   ports:
     - protocol: TCP
-      port: 5000  # Portul pe care backendul este expus in cluster
-      targetPort: 5000  # Portul pe care aplicatia backend ruleaza in container
+      port: 5000 
+      targetPort: 5000 
   selector:
     app: backend
