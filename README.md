@@ -19,7 +19,7 @@ After testing I pushed the images on Dockerhub:
 
 
 ## Kubernetes Cluster Setup
-I am using Minikube to set up a single-node kubernetes cluster. 
+I am using Minikube to set up a kubernetes cluster. 
 ![Screenshot 2024-09-02 151146](https://github.com/user-attachments/assets/1e47238a-6974-43e7-8c79-9f9393d142ba)
 
 
