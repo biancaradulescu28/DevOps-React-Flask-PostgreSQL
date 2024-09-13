@@ -44,7 +44,7 @@ The configuration defines a single replica of a PostgreSQL database, which uses 
 
 ### Services
 * **Backend service**
-This resource defines a ClusterIP service, exposing the backend application within the cluster on port 5000, directing traffic to port 500 in the container.
+This resource defines a ClusterIP service, exposing the backend application within the cluster on port 5000, directing traffic to port 5000 in the container.
 * **Frontend service**
 The yaml configures another ClusterIP service in the myapp namespace, exposing the application on port 80 in the cluster and mapping it to port 80 in the container. The selector field links the service to the corresponding frontend pods
 * **Database service**
