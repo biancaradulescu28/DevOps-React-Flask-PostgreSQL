@@ -101,7 +101,7 @@ The CPU requests and limits set how much CPU the namespace can request and use t
 ## Storage Configuration 
 **HostPath**
 * StorageClass
-This SC uses the HostPath CSI driver which provides storage on a node. It has immediate volume binding which indicated that PVCs will have volumes bound and allocated immediately on creation. The Volumes are created dynamically and when a PV from this StorageClass is deleted, the associated.
+This SC uses the HostPath CSI driver which provides storage on a node. It has immediate volume binding which indicated that PVCs will have volumes bound and allocated immediately on creation. The Volumes are created dynamically and when a PV from this StorageClass is deleted, the associated storage on the node is deleted.
 
 * PersistentVolumeClaim
 This PVC uses the hostpath StorageClass to create a storage request of 1GiB, with read-write access, both read from and written to, but only by one node at a time.
