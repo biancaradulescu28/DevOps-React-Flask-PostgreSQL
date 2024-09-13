@@ -3,7 +3,7 @@
 
 Deploy and manage a multi-tier application on a Kubernetes cluster. Is simple web application consisting of:
 * Frontend: A React.js application 
-* Backend: A Python Flask API  
+* Backend: A Python Flask
 * Database: PostgreSQL
 
 I created a web application which displays in browser a greeting for each name in a users database. After creating the application code in python and react I containerized the application using 2 Dockerfiles: 
