@@ -127,7 +127,6 @@ This Policy allows traffic from frontend to the backend pod on port 5000 and tra
 The frontend can communicate with the backend only on port 5000
 * **Database Network Policy**
 This allows traffic from the backend pod to the database pod on port 5432
-I also configured two Default Deny Policies, one for backend and one to the database to deny all ingress traffic to the pods.
 I also added deny policies for backend and database to block all incoming traffic except for what is allowed by other policies.
 ![Screenshot 2024-09-11 210930](https://github.com/user-attachments/assets/239940e1-5cea-4fdb-9e2b-e40a1cac0a38)
 ![NetworkPolicyDiagram drawio](https://github.com/user-attachments/assets/1778bb79-f18c-4916-8caf-f1be1ef54476)
